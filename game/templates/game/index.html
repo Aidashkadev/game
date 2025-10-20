@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Cat Clicker 😺</title>
+  <style>
+    body { text-align: center; font-family: sans-serif; background: #fcefe3; }
+    img { width: 200px; cursor: pointer; transition: transform .1s; }
+    img:active { transform: scale(1.1); }
+    h1 { color: #333; }
+  </style>
+</head>
+<body>
+  <h1>Cat Clicker 🍼</h1>
+
+  <img src="https://i.ibb.co/Vw7JkTz/cat.png" id="cat" alt="cat">
+  <h2>Молоко: <span id="milk">0</span></h2>
+
+  <script>
+    let milk = 0;
+    const milkDisplay = document.getElementById('milk');
+    const cat = document.getElementById('cat');
+
+    cat.onclick = () => {
+      milk++;
+      milkDisplay.textContent = milk;
+    };
+  </script>
+</body>
+</html>
