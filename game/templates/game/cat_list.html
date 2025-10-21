@@ -1,0 +1,23 @@
+{% extends 'game/base.html' %}
+
+{% block content %}
+<h1>🐾 Наши котики</h1>
+
+<div>
+    {% for cat in cats %}
+    <div class="cat-card">
+        <img src="{% if cat.image %}{{ cat.image.url }}{% else %}{% static 'game/default-cat.png' %}{% endif %}" class="cat-img">
+        <h3>{{ cat.name }}</h3>
+        <p>Кликов: {{ cat.clicks }}</p>
+
+        <form method="POST" action="{% url 'click_cat' cat.id %}">
+            {% csrf_token %}
+            <button>Покормить 🍼</button>
+        </form>
+
+        <a href="{% url 'edit_cat' cat.id %}" class="btn">✏️ Редактировать</a>
+        <a href="{% url 'delete_cat' cat.id %}" class="btn">❌ Удалить</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
