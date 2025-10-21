@@ -1,0 +1,17 @@
+{% extends 'game/base.html' %}
+{% block content %}
+<div class="max-w-md mx-auto bg-white shadow-lg rounded-2xl p-6 text-center">
+    <h2 class="text-2xl font-semibold text-pink-600 mb-4">Удалить котика? 😿</h2>
+    <p class="text-gray-700 mb-6">Ты уверена, что хочешь удалить "{{ cat.name }}"?</p>
+
+    <form method="POST" class="space-y-3">
+        {% csrf_token %}
+        <button type="submit"
+            class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 rounded-xl transition">
+            Да, удалить
+        </button>
+    </form>
+
+    <a href="{% url 'cat_list' %}" class="block mt-4 text-gray-600 hover:underline">Отмена</a>
+</div>
+{% endblock %}

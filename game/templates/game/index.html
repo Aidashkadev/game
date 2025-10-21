@@ -1,36 +1,20 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Игра с котиками</title>
-    <style>
-        body { font-family: Arial; text-align: center; background: #f0f8ff; }
-        button { padding: 10px 20px; font-size: 18px; background: #4CAF50; color: white; border: none; cursor: pointer; }
-        button:hover { background: #45a049; }
-        .cat { margin: 10px; padding: 10px; background: #fff; border: 1px solid #ddd; display: inline-block; width: 150px; }
-    </style>
-</head>
-<body>
-    <h1>Игра: Добавляй котиков! 🐱</h1>
-    <p>Котиков: <span id="count">0</span></p>
-    <button onclick="addCat()">Добавить котика</button>
-    <div id="cats"></div>
+{% extends 'game/base.html' %}
+{% block content %}
+<div class="flex flex-col items-center space-y-6">
+    <h2 class="text-3xl font-semibold text-pink-700">Кликай на котика!</h2>
 
-    <script>
-        let catCount = 0;
-        function addCat() {
-            catCount++;
-            document.getElementById('count').textContent = catCount;
-            
-            const catDiv = document.createElement('div');
-            catDiv.className = 'cat';
-            catDiv.innerHTML = `
-                <img src="https://placekitten.com/100/100" alt="Котик" style="width:100px; height:100px;">
-                <p>Котик №${catCount} 😻</p>
-            `;
-            document.getElementById('cats').appendChild(catDiv);
-        }
-    </script>
-</body>
-</html>
+    <img id="cat" src="https://placekitten.com/300/300" 
+         class="rounded-2xl shadow-lg cursor-pointer transition transform hover:scale-105"
+         onclick="incrementScore()">
+
+    <p class="text-2xl font-bold text-gray-800">Очки: <span id="score">0</span></p>
+</div>
+
+<script>
+let score = 0;
+function incrementScore() {
+    score++;
+    document.getElementById('score').innerText = score;
+}
+</script>
+{% endblock %}
