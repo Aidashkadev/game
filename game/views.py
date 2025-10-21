@@ -1,5 +1,6 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from .models import Cat
+from .forms import CatForm
 
 # READ — список котов
 def cat_list(request):
@@ -7,12 +8,16 @@ def cat_list(request):
     return render(request, 'game/cats.html', {'cats': cats})
 
 # CREATE — создать кота
+
 def create_cat(request):
     if request.method == 'POST':
-        name = request.POST.get('name')
-        Cat.objects.create(name=name)
-        return redirect('cat_list')
-    return render(request, 'game/create_cat.html')
+        form = CatForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('index')
+    else:
+        form = CatForm()
+    return render(request, 'game/create_cat.html', {'form': form})
 
 # UPDATE — редактировать кота
 def edit_cat(request, cat_id):
@@ -32,5 +37,9 @@ def delete_cat(request, cat_id):
     return redirect('cat_list')
 
 def index(request):
-    cats = Cat.objects.all()
-    return render(request, 'game/index.html', {'cats': cats})
+    cat_id = request.GET.get('cat_id')
+    cat = None
+    if cat_id:
+        from .models import Cat
+        cat = Cat.objects.filter(id=cat_id).first()
+    return render(request, 'game/index.html', {'cat': cat})

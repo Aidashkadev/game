@@ -8,9 +8,22 @@
     img { width: 200px; cursor: pointer; transition: transform .1s; }
     img:active { transform: scale(1.1); }
     h1 { color: #333; }
+    
   </style>
 </head>
 <body>
+  <div class="text-center mb-4">
+    <a href="{% url 'cat_list' %}" class="btn btn-primary px-4 py-2">Мои коты 🐱</a>
+    <a href="{% url 'create_cat' %}" class="btn btn-success px-4 py-2">Создать кота ➕</a>
+    {% if cat %}
+<h2>Кот: {{ cat.name }} (Lvl {{ cat.level }})</h2>
+<h3>Молоко: <span id="milk">{{ cat.milk }}</span></h3>
+{% else %}
+<h2>Выбери кота из списка 🐱</h2>
+{% endif %}
+
+</div>
+
   <h1>Cat Clicker 🍼</h1>
 
   <img src="https://i.ibb.co/Vw7JkTz/cat.png" id="cat" alt="cat">

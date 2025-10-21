@@ -14,10 +14,10 @@
 
   <form method="post">
     {% csrf_token %}
-    <div class="mb-3">
-      <label class="form-label font-semibold">Имя кота</label>
-      <input type="text" name="name" class="form-control" placeholder="Введите имя" required>
-    </div>
+    <input type="text" name="name" class="form-control" required>
+    <button type="submit">Создать кота</button>
+</form>
+
 
     <div class="text-center">
       <button type="submit" class="btn btn-success px-4 py-2">Создать кота</button>
