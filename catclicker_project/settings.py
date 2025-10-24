@@ -55,7 +55,8 @@ ROOT_URLCONF = 'catclicker_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],  # оставляем пустым, Django сам ищет в приложениях
+        'DIRS': [BASE_DIR / 'catclicker_project' / 'game' / 'templates'],
+ # оставляем пустым, Django сам ищет в приложениях
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

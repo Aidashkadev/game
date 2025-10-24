@@ -2,8 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Cat
 from .forms import CatForm
 
-def index(request):
-    return render(request, 'game/index.html')
+def index(request, cat_id=None):
+    cats = Cat.objects.all()
+    cat = None
+    if cat_id:
+        cat = get_object_or_404(Cat, id=cat_id)
+    return render(request, 'game/index.html', {'cats': cats, 'cat': cat})
 
 def cat_list(request):
     cats = Cat.objects.all()
@@ -36,3 +40,24 @@ def delete_cat(request, cat_id):
         cat.delete()
         return redirect('cat_list')
     return render(request, 'game/delete_cat.html', {'cat': cat})
+
+def play_cat(request, cat_id):
+    cat = get_object_or_404(Cat, id=cat_id)
+    cat.clicks += 1
+    cat.milk += 1  # каждый клик = +1 молоко
+    cat.level_up()
+    cat.save()
+    return redirect('cat_list')
+
+def rating(request):
+    cats = Cat.objects.all().order_by('-score')
+    return render(request, 'game/rating.html', {'cats': cats})
+
+def click_cat(request, cat_id):
+    cat = get_object_or_404(Cat, id=cat_id)
+    cat.score += 1
+    if cat.score % 10 == 0:
+        cat.level += 1
+        cat.milk += 1
+    cat.save()
+    return redirect('index_with_cat', cat_id=cat.id)
