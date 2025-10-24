@@ -9,5 +9,7 @@ urlpatterns = [
     path('cats/delete/<int:cat_id>/', views.delete_cat, name='delete_cat'),
     path('cats/play/<int:cat_id>/', views.play_cat, name='play_cat'),
     path('rating/', views.rating, name='rating'),
+     path('cat/<int:cat_id>/', views.index_with_cat, name='index_with_cat'),
+     path('click/<int:cat_id>/', views.click_cat, name='click_cat'),
 
 ]

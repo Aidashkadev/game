@@ -24,7 +24,7 @@ def create_cat(request):
     return render(request, 'game/create_cat.html', {'form': form})
 
 def edit_cat(request, cat_id):
-    cat = get_object_or_404(Cat, pk=cat_id)
+    cat = get_object_or_404(Cat, id=cat_id)
     if request.method == 'POST':
         form = CatForm(request.POST, instance=cat)
         if form.is_valid():
@@ -32,32 +32,33 @@ def edit_cat(request, cat_id):
             return redirect('cat_list')
     else:
         form = CatForm(instance=cat)
-    return render(request, 'game/edit_cat.html', {'form': form})
+    return render(request, 'game/edit_cat.html', {'form': form, 'cat': cat})
 
 def delete_cat(request, cat_id):
-    cat = get_object_or_404(Cat, pk=cat_id)
+    cat = get_object_or_404(Cat, id=cat_id)
     if request.method == 'POST':
         cat.delete()
         return redirect('cat_list')
     return render(request, 'game/delete_cat.html', {'cat': cat})
 
 def play_cat(request, cat_id):
+    # просто страница игры/клика — показывает кота и кнопку клика
     cat = get_object_or_404(Cat, id=cat_id)
-    cat.clicks += 1
-    cat.milk += 1  # каждый клик = +1 молоко
-    cat.level_up()
+    return render(request, 'game/play_cat.html', {'cat': cat})
+def click_cat(request, cat_id):
+    cat = get_object_or_404(Cat, id=cat_id)
+    cat.score += 1  # каждый клик добавляет очки
+    if cat.score % 10 == 0:  # например, каждые 10 очков кот получает уровень
+        cat.level += 1
+        cat.milk += 5
     cat.save()
-    return redirect('cat_list')
+    return redirect('index_with_cat', cat_id=cat.id)
 
 def rating(request):
     cats = Cat.objects.all().order_by('-score')
     return render(request, 'game/rating.html', {'cats': cats})
 
-def click_cat(request, cat_id):
+def index_with_cat(request, cat_id):
+    cats = Cat.objects.all()
     cat = get_object_or_404(Cat, id=cat_id)
-    cat.score += 1
-    if cat.score % 10 == 0:
-        cat.level += 1
-        cat.milk += 1
-    cat.save()
-    return redirect('index_with_cat', cat_id=cat.id)
+    return render(request, 'game/index.html', {'cats': cats, 'cat': cat})

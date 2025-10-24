@@ -47,7 +47,10 @@ body {
     <h1 class="text-3xl font-bold mb-6 text-center text-blue-500 drop-shadow-md">
       🐱 Создать нового кота
     </h1>
-
+<div style="margin-top: 20px;">
+  <a href="javascript:history.back()" class="btn btn-secondary">⬅ Назад</a>
+  <a href="{% url 'index' %}" class="btn btn-primary">🏠 На главную</a>
+</div>
     <form method="post" class="space-y-6">
       {% csrf_token %}
       
@@ -64,10 +67,7 @@ body {
       </div>
     </form>
   </div>
-<div style="margin-top: 20px;">
-  <a href="javascript:history.back()" class="btn btn-secondary">⬅ Назад</a>
-  <a href="{% url 'index' %}" class="btn btn-primary">🏠 На главную</a>
-</div>
+
 
 </body>
 </html>
