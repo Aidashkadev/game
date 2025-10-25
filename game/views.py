@@ -53,7 +53,7 @@ def click_cat(request, cat_id):
     # Увеличиваем очки
     cat.score = (cat.score or 0) + 1
     # Если достигли кратного 20 — даём молоко
-    if cat.score % 100 == 0:
+    if cat.score % 20 == 0:
         cat.milk = (cat.milk or 0) + 1
     cat.save()
     return JsonResponse({'score': cat.score, 'milk': cat.milk})

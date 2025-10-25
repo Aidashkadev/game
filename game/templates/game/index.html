@@ -40,6 +40,7 @@
         <p class="text-gray-600 mb-2">Уровень: {{ cat.level }}</p>
         <p id="catMilk" class="text-gray-600 mb-4">Молоко: 🍼 {{ cat.milk|default:0 }}</p>
 
+        
 
         <form id="clickForm" action="{% url 'click_cat' cat.id %}" method="post">
             {% csrf_token %}
@@ -173,6 +174,14 @@ function createConfetti() {
         console.error('Ошибка AJAX:', err);
     });
 });
+const playMusicBtn = document.getElementById('playMusicBtn');
+const bgMusic = document.getElementById('bgMusic');
+
+playMusicBtn.addEventListener('click', () => {
+    bgMusic.play();
+    playMusicBtn.disabled = true; // отключаем кнопку после клика
+});
+
 </script>
 
 
@@ -190,9 +199,10 @@ function createConfetti() {
     {% else %}
     <p class="text-gray-500 text-lg">Выбери кота, чтобы начать игру 😺</p>
     {% endif %}
-    <audio id="bgMusic" loop autoplay>
-  <source src="/sounds/cat-meow-8-fx-306184.mp3" type="audio/mpeg">
-  Твой браузер не поддерживает аудио.
+    {% load static %}
+<audio id="bgMusic" autoplay loop>
+  <source src="{% static 'game/sounds/maxwell.mp3' %}" type="audio/mpeg">
 </audio>
+
 </div>
 {% endblock %}

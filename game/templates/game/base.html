@@ -13,34 +13,26 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Custom style (если нужно) -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body class="min-h-screen flex flex-col bg-cover bg-center bg-no-repeat"
-      style="background-image: url('{% static '/game/images/one_cat.jpeg' %}');">
-
-
-
+      style="background-image: url('{% static 'game/images/простой.jpeg' %}');">
 
     <!-- Навигация -->
-   <nav class="bg-white shadow-md sticky top-0 z-50 py-3">
-    <div class="flex justify-center gap-4">
-        {% if cat %}
-        <a href="{% url 'index_with_cat' cat.id %}" 
-           class="px-4 py-2 bg-pink-500 text-white font-bold rounded-lg shadow-lg
-                  hover:bg-pink-600 transition transform duration-200 hover:scale-105"> 🐾Главная</a>
-    {% endif %}
-        <a href="{% url 'cat_list' %}" 
-           class="px-4 py-2 bg-pink-500 text-white font-bold rounded-lg shadow-lg
-                  hover:bg-pink-600 transition transform duration-200 hover:scale-105"> 🐈Мои коты</a>
+   <nav class="bg-white/30 backdrop-blur-md shadow-md sticky top-0 z-50 py-3">
+        <div class="flex justify-center gap-4">
+            {% if cat %}
+            <a href="{% url 'index_with_cat' cat.id %}" 
+               class="px-4 py-2 bg-pink-500 text-white font-bold rounded-lg shadow-lg
+                      hover:bg-pink-600 transition transform duration-200 hover:scale-105"> 🐾Главная</a>
+            {% endif %}
+            <a href="{% url 'cat_list' %}" 
+               class="px-4 py-2 bg-pink-500 text-white font-bold rounded-lg shadow-lg
+                      hover:bg-pink-600 transition transform duration-200 hover:scale-105"> 🐈Мои коты</a>
 
-        <a href="{% url 'create_cat' %}" 
-           class="px-4 py-2 bg-pink-500 text-white font-bold rounded-lg shadow-lg
-                  hover:bg-pink-600 transition transform duration-200 hover:scale-105"> ➕Добавить котика</a>
-    </div>
-</nav>
-
-
+            <a href="{% url 'create_cat' %}" 
+               class="px-4 py-2 bg-pink-500 text-white font-bold rounded-lg shadow-lg
+                      hover:bg-pink-600 transition transform duration-200 hover:scale-105"> ➕Добавить котика</a>
         </div>
     </nav>
 
@@ -51,9 +43,48 @@
     </main>
 
     <!-- Футер -->
-    <footer class="bg-white text-center text-gray-600 py-3 shadow-inner">
+    <footer class="bg-white/30 backdrop-blur-md text-center text-gray-600 py-3 shadow-inner">
         Made with ❤️ by <span class="font-semibold text-pink-500">Айдана</span>
     </footer>
 
+    <!-- Музыка -->
+    <audio id="bgMusic" loop>
+        <source src="{% static 'game/sounds/maxwell.mp3' %}" type="audio/mpeg">
+        Твой браузер не поддерживает музыку 😿
+    </audio>
+
+    <button id="playMusicBtn"
+            class="fixed bottom-5 right-5 px-4 py-2 bg-pink-500 text-white rounded-full shadow-lg z-50 hover:bg-pink-600 transition">
+        🎵 Включить музыку
+    </button>
+
+    <script>
+        const music = document.getElementById('bgMusic');
+        const btn = document.getElementById('playMusicBtn');
+        let playing = false;
+
+        btn.addEventListener('click', () => {
+            if (!music) {
+                console.error("⚠️ Аудио элемент не найден!");
+                return;
+            }
+
+            if (!playing) {
+                music.play().then(() => {
+                    btn.textContent = '⏸ Остановить музыку';
+                    playing = true;
+                    console.log("✅ Музыка запущена:", music.src);
+                }).catch(err => {
+                    console.error("❌ Ошибка проигрывания:", err);
+                    alert("Разреши воспроизведение звука в браузере 😺");
+                });
+            } else {
+                music.pause();
+                btn.textContent = '🎵 Включить музыку';
+                playing = false;
+                console.log("⏹ Музыка остановлена");
+            }
+        });
+    </script>
 </body>
 </html>
