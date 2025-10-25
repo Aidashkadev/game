@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Cat
 from .forms import CatForm
+from django.http import JsonResponse
+
 
 def index(request, cat_id=None):
     cats = Cat.objects.all()
@@ -45,14 +47,14 @@ def play_cat(request, cat_id):
     # просто страница игры/клика — показывает кота и кнопку клика
     cat = get_object_or_404(Cat, id=cat_id)
     return render(request, 'game/play_cat.html', {'cat': cat})
+
 def click_cat(request, cat_id):
-    cat = get_object_or_404(Cat, id=cat_id)
-    cat.score += 1  # каждый клик добавляет очки
-    if cat.score % 10 == 0:  # например, каждые 10 очков кот получает уровень
-        cat.level += 1
-        cat.milk += 5
-    cat.save()
-    return redirect('index_with_cat', cat_id=cat.id)
+    if request.method == 'POST':
+        cat = Cat.objects.get(id=cat_id)
+        cat.score += 1
+        cat.save()
+        return JsonResponse({'score': cat.score})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def rating(request):
     cats = Cat.objects.all().order_by('-score')
