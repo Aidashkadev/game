@@ -55,7 +55,7 @@ ROOT_URLCONF = 'catclicker_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'catclicker_project' / 'game' / 'templates'],
+        'DIRS': [],
  # оставляем пустым, Django сам ищет в приложениях
         'APP_DIRS': True,
         'OPTIONS': {
@@ -128,3 +128,6 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

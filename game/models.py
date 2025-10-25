@@ -17,3 +17,10 @@ class Cat(models.Model):
             self.level += 1
             self.milk += 5
             self.save()
+class Cat(models.Model):
+    name = models.CharField(max_length=100)
+    photo = models.ImageField(upload_to='cats/', blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    mood = models.CharField(max_length=20, choices=[('happy','Счастливый'),('grumpy','Сердитый'),('sleepy','Сонный')], default='happy')
+    milk = models.IntegerField(default=0)
+    score = models.IntegerField(default=0)  # ← вот это добавляем

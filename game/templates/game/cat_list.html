@@ -36,7 +36,7 @@ body {
 </head>
 
 <body class="p-6">
-<a href="{% url 'cat_list' %}" 
+<a href="/" 
    class="inline-block mb-4 px-4 py-2 bg-pink-500 text-white rounded-lg shadow-lg
           hover:bg-pink-600 transition duration-200">
    ← Назад
@@ -70,6 +70,12 @@ body {
         {% else %}
           <span class="text-gray-400 font-semibold">Неизвестно</span>
         {% endif %}
+        {% if cat.photo %}
+  <img src="{{ cat.photo.url }}" alt="{{ cat.name }}" class="mx-auto mb-3 w-24 h-24 object-contain">
+{% else %}
+  <img src="{% static 'images/cat.png' %}" alt="cat" class="mx-auto mb-3 w-24 h-24 object-contain">
+{% endif %}
+
       </p>
       <p class="text-gray-600 mb-4">🥛 Молоко: <span class="font-semibold">{{ cat.milk }}</span></p>
 

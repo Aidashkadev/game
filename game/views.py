@@ -17,10 +17,10 @@ def cat_list(request):
 
 def create_cat(request):
     if request.method == 'POST':
-        form = CatForm(request.POST)
+        form = CatForm(request.POST, request.FILES)  # важно: request.FILES для фото
         if form.is_valid():
             form.save()
-            return redirect('cat_list')
+            return redirect('cat_list')  # или куда хочешь
     else:
         form = CatForm()
     return render(request, 'game/create_cat.html', {'form': form})

@@ -51,7 +51,7 @@ body {
   <a href="javascript:history.back()" class="btn btn-secondary">⬅ Назад</a>
   <a href="{% url 'index' %}" class="btn btn-primary">🏠 На главную</a>
 </div>
-    <form method="post" class="space-y-6">
+    <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
       
       <div>
@@ -65,6 +65,7 @@ body {
         <button type="submit" class="btn btn-create px-5 py-2 rounded-xl">✨ Создать кота</button>
         <a href="{% url 'cat_list' %}" class="btn btn-outline-secondary px-5 py-2 rounded-xl">⬅ Назад</a>
       </div>
+      
     </form>
   </div>
 
