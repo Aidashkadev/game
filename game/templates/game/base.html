@@ -16,22 +16,26 @@
     <!-- Custom style (если нужно) -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body class="bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col bg-cover bg-center bg-no-repeat"
+      style="background-image: url('{% static '/game/images/one_cat.jpeg' %}');">
+
+
 
     <!-- Навигация -->
    <nav class="bg-white shadow-md sticky top-0 z-50 py-3">
     <div class="flex justify-center gap-4">
+        {% if cat %}
         <a href="{% url 'index_with_cat' cat.id %}" 
            class="px-4 py-2 bg-pink-500 text-white font-bold rounded-lg shadow-lg
-                  hover:bg-pink-600 transition transform duration-200 hover:scale-105">Кот</a>
-
+                  hover:bg-pink-600 transition transform duration-200 hover:scale-105"> 🐾Главная</a>
+    {% endif %}
         <a href="{% url 'cat_list' %}" 
            class="px-4 py-2 bg-pink-500 text-white font-bold rounded-lg shadow-lg
-                  hover:bg-pink-600 transition transform duration-200 hover:scale-105">Мои коты</a>
+                  hover:bg-pink-600 transition transform duration-200 hover:scale-105"> 🐈Мои коты</a>
 
         <a href="{% url 'create_cat' %}" 
            class="px-4 py-2 bg-pink-500 text-white font-bold rounded-lg shadow-lg
-                  hover:bg-pink-600 transition transform duration-200 hover:scale-105">Добавить котика</a>
+                  hover:bg-pink-600 transition transform duration-200 hover:scale-105"> ➕Добавить котика</a>
     </div>
 </nav>
 

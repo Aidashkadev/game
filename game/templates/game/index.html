@@ -14,6 +14,9 @@
     50% { transform: scale(1.2); }
     100% { transform: scale(1); }
 }
+
+ 
+
 #catButton:active img {
     animation: bounce 0.2s ease;
 }
@@ -22,7 +25,6 @@
 <div class="container mx-auto text-center mt-10">
     <h1 class="text-4xl font-bold text-pink-700 mb-6">🐾 Cat Clicker</h1>
 
-    <!-- Выбор кота -->
     <div class="flex justify-center mb-4 space-x-4">
         {% for c in cats %}
         <a href="{% url 'index_with_cat' c.id %}" 
@@ -32,29 +34,27 @@
         {% endfor %}
     </div>
 
-    <!-- Если кот выбран -->
     {% if cat %}
     <div class="bg-white rounded-xl shadow-lg p-6 w-96 mx-auto">
         <h2 class="text-3xl font-semibold text-gray-800 mb-2">{{ cat.name }}</h2>
         <p class="text-gray-600 mb-2">Уровень: {{ cat.level }}</p>
-        <p class="text-gray-600 mb-4">Молоко: 🍼 {{ cat.milk }}</p>
+        <p id="catMilk" class="text-gray-600 mb-4">Молоко: 🍼 {{ cat.milk|default:0 }}</p>
+
 
         <form id="clickForm" action="{% url 'click_cat' cat.id %}" method="post">
             {% csrf_token %}
-           <button type="button" id="catButton"
-        class="px-6 py-3 rounded-full bg-gradient-to-r from-pink-400 via-purple-500 to-blue-500 
-               text-white font-bold text-xl shadow-lg transform transition duration-300 hover:scale-110 
-               hover:shadow-2xl active:scale-95 focus:outline-none">
-    🐱 Click me!
-</button>
-
+            <button type="button" id="catButton"
+                class="px-6 py-3 rounded-full bg-gradient-to-r from-pink-400 via-purple-500 to-blue-500 
+                       text-white font-bold text-xl shadow-lg transform transition duration-300 hover:scale-110 
+                       hover:shadow-2xl active:scale-95 focus:outline-none">
+                🐱 Click me!
+            </button>
         </form>
 
-        <!-- 🎵 Звук клика -->
-        <audio id="clickSound" src="{% static 'game/sounds/cat-meow-8-fx-306184.mp3' %}"></audio>
+        
 
-        <!-- JavaScript-код -->
         <script>
+/* helper: получить csrftoken из cookie */
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -71,85 +71,110 @@ function getCookie(name) {
 }
 
 const csrftoken = getCookie('csrftoken');
+const catName = "{{ cat.name|default:'Кот' }}";
+let catMilk = {{ cat.milk|default:0 }};
+const catMilkElem = document.getElementById('catMilk'); // должен быть в DOM
+const clickSound = document.getElementById('clickSound');
+const catButton = document.getElementById('catButton');
 
+if (!catMilkElem) {
+    console.warn('catMilk element not found — убедись, что <p id="catMilk"> есть в шаблоне');
+}
 
-            
-        document.getElementById('catButton').addEventListener('click', function(event) {
-            event.preventDefault();
+catButton.addEventListener('click', function(event) {
+    event.preventDefault();
 
-            // Воспроизведение звука
-            const sound = document.getElementById('clickSound');
-            if (sound) {
-                console.log('Аудио элемент найден, URL:', sound.src);
-                console.log('Состояние аудио:', sound.readyState, sound.paused);
-                sound.currentTime = 0;
-                sound.play().catch(function(error) {
-                    console.error('Ошибка воспроизведения звука:', error.message);
-                    console.error('URL аудиофайла:', sound.src);
-                });
-            } else {
-                console.error('Элемент <audio> с id="clickSound" не найден');
-            }
+    // мгновенный звук клика (каждый клик)
+    if (clickSound) {
+        clickSound.currentTime = 0;
+        clickSound.play().catch(err => console.log('play error:', err));
+    }
 
-            // AJAX-запрос
-            fetch("{% url 'click_cat' cat.id %}", {
-                method: 'POST',
-                headers: {
-    'Content-Type': 'application/json',
-    'X-CSRFToken': csrftoken,
-},
+    fetch("{% url 'click_cat' cat.id %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+        },
+        body: JSON.stringify({ action: 'click' })
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('network response not ok: ' + response.status);
+        return response.json();
+    })
+    .then(data => {
+        // Обновляем очки
+        if (data.score !== undefined) {
+            document.querySelector('.score').textContent = `Очки: ${data.score}`;
+        }
 
-                body: JSON.stringify({ action: 'click' })
-            })
-            .then(response => {
-                console.log('Статус ответа:', response.status);
-                if (!response.ok) {
-                    throw new Error('Сетевой ответ не OK: ' + response.status);
-                }
-                return response.text();
-            })
-            .then(text => {
-                console.log('Текст ответа:', text);
-                let data;
-                try {
-                    data = JSON.parse(text);
-                } catch (e) {
-                    console.error('Ошибка парсинга JSON:', e.message, 'Текст:', text);
-                    throw new Error('Некорректный JSON: ' + text);
-                }
-                console.log('Данные от сервера:', data);
-                if (data.score !== undefined) {
-                    document.querySelector('.score').textContent = `Очки: ${data.score}`;
-                    if (data.score >= 20 && data.score % 20 === 0) {
-                        const happyCatDiv = document.getElementById('happyCat');
-                        if (!happyCatDiv) {
-                            const newDiv = document.createElement('div');
-                            newDiv.id = 'happyCat';
-                            newDiv.className = 'mt-6 fade-in';
-                            newDiv.innerHTML = `
-                                <img src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif"
-                                     alt="happy cat"
-                                     class="mx-auto w-60 rounded-xl shadow-lg">
-                                <p class="text-pink-600 font-bold mt-2 text-xl">Ура! {{ cat.name|default:'Кот' }} счастлив 😻</p>
-                            `;
-                            document.querySelector('.score').before(newDiv);
-                        }
-                    }
-                } else {
-                    console.error('Ошибка: score не возвращён в ответе', data);
-                    // Резервное обновление
-                    fetch("{% url 'index_with_cat' cat.id %}")
-                    .then(resp => resp.json())
-                    .then(catData => {
-                        if (catData.score !== undefined) {
-                            document.querySelector('.score').textContent = `Очки: ${catData.score}`;
-                        }
-                    });
-                }
-            })
-            .catch(error => console.error('Ошибка AJAX:', error.message));
-        });
-        </script>
+        // Обновляем молоко — сервер возвращает актуальное значение
+        if (data.milk !== undefined && catMilkElem) {
+            catMilk = data.milk;
+            catMilkElem.textContent = `Молоко: 🍼 ${catMilk}`;
+        }
+
+        // Показываем/убираем гифку счастья (появляется, когда score кратен 20)
+        // 🎉 Юбилейный клик (каждые 20)
+const existingGif = document.getElementById('happyCat');
+if (data.score % 20 === 0) {
+    // Гифка
+    if (!existingGif) {
+        const newDiv = document.createElement('div');
+        newDiv.id = 'happyCat';
+        newDiv.className = 'mt-6 fade-in';
+        newDiv.innerHTML = `
+            <img src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif"
+                 alt="happy cat"
+                 class="mx-auto w-60 rounded-xl shadow-lg">
+            <p class="text-pink-600 font-bold mt-2 text-xl">Ура! ${catName} счастлив 😻</p>
+        `;
+        document.querySelector('.score').before(newDiv);
+
+      
+       
+
+        // 🎵 Звук только тут
+        if (clickSound) {
+            clickSound.currentTime = 0;
+            clickSound.play().catch(err => console.log('Ошибка звука:', err));
+        }
+
+        // 🎊 Конфетти эффект
+        createConfetti();
+    }
+} else if (existingGif) {
+    existingGif.remove();
+}
+
+// 🎊 Простая функция для конфетти
+function createConfetti() {
+    const duration = 2 * 1000;
+    const end = Date.now() + duration;
+
+    (function frame() {
+        // создаем частицы
+        const confetti = document.createElement('div');
+        confetti.textContent = '🎉';
+        confetti.style.position = 'fixed';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.top = '-10px';
+        confetti.style.fontSize = '24px';
+        confetti.style.animation = `fall ${Math.random() * 3 + 2}s linear`;
+        document.body.appendChild(confetti);
+
+        setTimeout(() => confetti.remove(), 4000);
+        if (Date.now() < end) requestAnimationFrame(frame);
+    })();
+}
+
+    })
+    .catch(err => {
+        console.error('Ошибка AJAX:', err);
+    });
+});
+</script>
+
 
         {% if cat.score is defined and cat.score >= 20 and cat.score|divisibleby:20 %}
         <div id="happyCat" class="mt-6 fade-in">

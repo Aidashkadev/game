@@ -49,12 +49,15 @@ def play_cat(request, cat_id):
     return render(request, 'game/play_cat.html', {'cat': cat})
 
 def click_cat(request, cat_id):
-    if request.method == 'POST':
-        cat = Cat.objects.get(id=cat_id)
-        cat.score += 1
-        cat.save()
-        return JsonResponse({'score': cat.score})
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+    cat = get_object_or_404(Cat, id=cat_id)
+    # Увеличиваем очки
+    cat.score = (cat.score or 0) + 1
+    # Если достигли кратного 20 — даём молоко
+    if cat.score % 100 == 0:
+        cat.milk = (cat.milk or 0) + 1
+    cat.save()
+    return JsonResponse({'score': cat.score, 'milk': cat.milk})
+
 
 def rating(request):
     cats = Cat.objects.all().order_by('-score')
